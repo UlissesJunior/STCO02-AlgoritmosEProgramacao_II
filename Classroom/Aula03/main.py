@@ -59,6 +59,72 @@ class HashTable:
             hv = (hv + 1) % self.size
         
         return None
+
+    def put_quadratico(self, key, value):
+        hi = HashItem(key, value)
+        hv = self.hash(key) % self.size
+        pos = hv
+        
+        i = 1
+        
+        while self.slots[pos] != None:
+            pos = (hv + pow(i, 2)) % self.size
+            i = i + 1
+        
+        self.slots[pos] = hi
+        self.count +=1
+        self.check_growth()
+        
+    def get_quadratico(self, key):
+        hv = self.hash(key) % self.size
+        pos = hv
+        i = 1
+        while self.slots[pos] != None:
+            if self.slots[pos].key == key:
+                return self.slots[pos].value
+            pos = (hv + pow(i, 2)) % self.size
+            i = i + 1
+        
+        return None
+
+    #diferente do livro
+    def hash2(self, key):
+        num = self.hash(key)
+        prime = 5
+        return prime - (num % prime)
+        
+    def put_doublehash(self, key, value):
+        hi = HashItem(key, value)
+        hv = self.hash(key) % self.size
+        pos = hv
+        
+        i = 1
+        
+        while self.slots[pos] != None:
+            pos = (hv + i * self.hash2(key)) % self.size
+            i += 1
+        
+        self.slots[pos] = hi
+        self.count +=1
+        self.check_growth()
+        
+    def get_doublehash(self, key):
+        hv = self.hash(key) % self.size
+        pos = hv
+        i = 1
+        while self.slots[pos] != None:
+            if self.slots[pos].key == key:
+                return self.slots[pos].value
+            pos = (hv + i * self.hash2(key)) % self.size
+            i += 1
+        
+        return None
+
+    def __setitem__(self, key, value):
+        self.put_doublehash(key, value)
+    
+    def __getitem__(self, key):
+        return self.get_doublehash(key)
     
     def growth(self):
         newTable = HashTable(self.size * 2)
@@ -98,3 +164,12 @@ print(Table.get("jose"))
 print(Table.get("henrique"))
 print(Table.get("ga"))
 print(Table.get("ad"))
+
+Table.put(['h', 'o', 'k'], 'oi')
+print(Table.get(['h', 'o', 'k']))
+
+Table["ferreira"] = 2024002613
+print(Table["ferreira"])
+
+Table["hokamaa"] = 2024003342
+print(Table["hokamaa"])
